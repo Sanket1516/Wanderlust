@@ -1,27 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit a post</title>
-</head>
+<% layout("/../layouts/boilerplate") %>
+<!-- applying the ejs mate boilerplate to this file -->
 <body>
+    <div class="row mt-3">
+        <div class="col-8 offset-2">
     <h3>Edit a post</h3>
     <form method="post" action="/listings/<%=data._id%>?_method=PUT">
-         <br><br>
-        <input type="text" name = "listing[title]" value="<%=data.title%>" >
-         <br><br>
-        <textarea name = "listing[description]" rows="5" cols="30"><%=data.description%></textarea>
-         <br><br>
-        <input type="text" name = "listing[image]" value="<%=data.image%>">
-         <br><br>
-        <input type="number" name = "listing[price]" value="<%=data.price%>">
-         <br><br>
-        <input type="text" name = "listing[location]" value="<%=data.location%>">
-         <br><br>
-        <input type="text" name = "listing[country]" value="<%=data.country%>">
-        <br><br>
-        <button>Edit</button>
+             <div class="mb-3">
+                 <label for="title" class="form-label">Title</label>
+                 <input type="text" name = "listing[title]" value="<%=data.title%>" class="form-control">
+             </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" name="listing[description]" rows="5" cols="30" class="form-control"><%=data.description%></textarea>
+        </div>
+        <div class="mb3">
+        <label for="image" class="form-label">Image</label>
+        <input type="text" name = "listing[image]" value="<%=data.image%>" class="form-control">
+        </div>
+        <div class="row">
+        <div class="mb3 col-md-4">
+        <label for="price" class="form-label">Price</label>
+        <input type="number" name = "listing[price]" value="<%=data.price%>" class="form-control">
+        </div>
+        <div class="mb-3 col-md-8">
+        <label for="location" class="form-label">Location</label>
+        <input type="text" name = "listing[location]" value="<%=data.location%> " class="form-control">
+        </div>
+        </div>
+        <div class="mb-3">
+        <label for="country" class="form-label">Country</label>
+        <input type="text" name = "listing[country]" value="<%=data.country%>" class="form-control">
+        </div>
+        <button class="btn btn-dark edit-btn mt-3">Edit</button>
     </form>
+    </div>
+    </div>
 </body>
-</html>
