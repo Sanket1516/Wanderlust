@@ -1,16 +1,22 @@
 <% layout("/../layouts/boilerplate") %>
 <body> 
+    <!-- Now for form validation we have two ways:
+    1)first is to use the HTML5 validation which is done by adding the "required" attribute to the input fields.
+    a)This will change the error msg from browser to browser and will not be consistent.
+    2)The second way is to use JavaScript to validate the form before submission with bootstrap.
+    we will use 2nd -->
     <div class="row mt-3">
         <div class="col-8 offset-2" >
     <h3>Create a new Listing</h3>
-    <form method="post" action="/listings">
+    <!-- This two attributes novalidate and class - needs-validation are for bootstrap form validation; -->
+    <form method="post" action="/listings" novalidate class="needs-validation">
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
-            <input type="text" placeholder="Add a catchy Title" name="listing[title]" class="form-control">
+            <input type="text" placeholder="Add a catchy Title" name="listing[title]" class="form-control" required>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
-            <textarea name="listing[description]" class="form-control"></textarea>
+            <textarea name="listing[description]" class="form-control" required></textarea>
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>
@@ -19,16 +25,16 @@
         <div class="row">
         <div class="mb-3 col-md-4">
             <label for="price" class="form-label">Price</label>
-            <input type="number" name="listing[price]" placeholder="200" class="form-control">
+            <input type="number" name="listing[price]" placeholder="200" class="form-control" required>
         </div>
         <div class="mb-3 col-md-8">
             <label for="country" class="form-label">Country</label>
-            <input type="text" name="listing[country]" placeholder="India" class="form-control">
+            <input type="text" name="listing[country]" placeholder="India" class="form-control" required>
         </div>
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
-            <input type="text" name="listing[location]" placeholder="Mumbai, Maharashtra" class="form-control">
+            <input type="text" name="listing[location]" placeholder="Mumbai, Maharashtra" class="form-control" required>
         </div>
         <button class="btn btn-dark add-btn mt-3">Add</button>
     </form>

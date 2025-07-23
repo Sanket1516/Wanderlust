@@ -5,6 +5,7 @@ const mongoose_url = "mongodb://127.0.0.1:27017/vanderlust";
 const listing = require("./models/listing.js")
 const path = require("path");
 const methodOverride = require("method-override")
+let port = 8080;
 //Require ejs mate
 const ejsmate = require("ejs-mate");
 
@@ -52,11 +53,6 @@ app.put("/listings/:id",async (req,res)=>{
     res.redirect(`/listings/${id}`);
 })
 
-let port = 8080;
-app.listen(port,()=>{
-    console.log("You are listning to port "+ port);
-})
-
 app.get("/listings/:id/edit",async (req,res)=>{
     let {id : id} = req.params;
     let data = await listing.findById(id);
@@ -85,4 +81,9 @@ app.get("/listings/:id",async (req,res)=>{
     let data = await listing.findById(id);
     res.render("listings/show.ejs",{data})
 });
+
+
+app.listen(port,()=>{
+    console.log("You are listning to port "+ port);
+})
 
