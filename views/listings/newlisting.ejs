@@ -13,10 +13,14 @@
         <div class="mb-3">
             <label for="title" class="form-label">Title</label>
             <input type="text" placeholder="Add a catchy Title" name="listing[title]" class="form-control" required>
+            <!-- Now For Printing Success and Error messages we will use the bootstrap classes. 
+             for success we will use "is-valid" and for error we will use "is-invalid" as a class name for a div and will create that div within a div where a input tag is present-->
+            <div class="invalid-feedback">Please Enter a valid title</div>
         </div>
         <div class="mb-3">
             <label for="description" class="form-label">Description</label>
             <textarea name="listing[description]" class="form-control" required></textarea>
+            <div class="invalid-feedback">Please Enter a valid description</div>
         </div>
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>
@@ -26,15 +30,19 @@
         <div class="mb-3 col-md-4">
             <label for="price" class="form-label">Price</label>
             <input type="number" name="listing[price]" placeholder="200" class="form-control" required>
+            <div class="invalid-feedback">Please Enter a valid price</div>
+
         </div>
         <div class="mb-3 col-md-8">
             <label for="country" class="form-label">Country</label>
             <input type="text" name="listing[country]" placeholder="India" class="form-control" required>
+            <div class="invalid-feedback">Please Enter the valid country</div>
         </div>
         </div>
         <div class="mb-3">
             <label for="location" class="form-label">Location</label>
             <input type="text" name="listing[location]" placeholder="Mumbai, Maharashtra" class="form-control" required>
+            <div class="invalid-feedback">Please Enter a valid location</div>
         </div>
         <button class="btn btn-dark add-btn mt-3">Add</button>
     </form>

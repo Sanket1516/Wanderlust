@@ -6,6 +6,8 @@ const listing = require("./models/listing.js")
 const path = require("path");
 const methodOverride = require("method-override")
 let port = 8080;
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
 //Require ejs mate
 const ejsmate = require("ejs-mate");
 
@@ -82,8 +84,20 @@ app.get("/listings/:id",async (req,res)=>{
     res.render("listings/show.ejs",{data})
 });
 
+//This is for a if the req come and do not match any of the above routes then it will come here 
+//and it islike logic like if it not matches at all then we will send a a error page not found
+app.all("*",(req,res,next)=>{
+    next(new ExpressError(404,"Page not found"));
+})
+//We can also use app.use above but to use app.all is better practice and is stritly recommended
 
-app.listen(port,()=>{
-    console.log("You are listning to port "+ port);
+app.use((err,req,res,next)=>{
+    console.log(err);
+    let {statusCode = 500, message = "Something went wrong"} = err;
+    res.status(statusCode).send(message);
 })
 
+
+app.listen(port, () => {
+    console.log("You are listening to port " + port);
+});
