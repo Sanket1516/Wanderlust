@@ -86,10 +86,16 @@ app.get("/listings/:id",async (req,res)=>{
 
 //This is for a if the req come and do not match any of the above routes then it will come here 
 //and it islike logic like if it not matches at all then we will send a a error page not found
-app.all("*",(req,res,next)=>{
-    next(new ExpressError(404,"Page not found"));
+app.use((req,res,next)=>{
+    next(new ExpressError(404,"Page Not Found"));
 })
 //We can also use app.use above but to use app.all is better practice and is stritly recommended
+
+//why this is not working
+// app.all("*",(req,res,next)=>{
+//     next(new ExpressError(404,"Page Not Found"));
+// })
+
 
 app.use((err,req,res,next)=>{
     console.log(err);
