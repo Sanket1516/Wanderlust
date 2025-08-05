@@ -17,6 +17,7 @@
 
     // Model imports
     const Listing = require("./models/listing.js"); // Mongoose model for your listings
+    const Review = require("./models/review.js");
 
     // ===============================================
     // 2. Configuration Variables
@@ -162,6 +163,20 @@
         res.redirect("/listings"); // Redirect to the listings index page after deletion
         return;
     }));
+
+    //reviews
+    app.post("/listings/:id/reviews", wrapAsync(async (req, res) => {
+        let listing = await Listing.findById(req.params.id)
+        let newreview = new Review(req.body.review);
+
+        listing.reviews.push(newreview);
+
+        await newreview.save();
+        await listing.save();
+
+        console.log("new revirew send");
+        res.send("review saved");
+    }))
 
     // ===============================================
     // 6. Error Handling Middleware
