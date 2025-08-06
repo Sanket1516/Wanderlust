@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const Review = require("./review");
 const schema = mongoose.Schema;
 const listing_Schema = new schema(
     {
@@ -44,6 +44,14 @@ const listing_Schema = new schema(
         ]
     }
 )
+
+//we will also add our mongoose middlewares here only like post or pre
+//delete listing delete all reviews delete middleware
+listing_Schema.post("findOneAndDelete", async(listing)=>{
+    if(listing){
+        await Review.deleteMany({_id : {$in : listing.reviews}})
+    }
+});
 
 const listing = mongoose.model("listing",listing_Schema)
 module.exports = listing;

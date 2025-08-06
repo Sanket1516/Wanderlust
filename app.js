@@ -188,6 +188,23 @@
         res.redirect(`/listings/${req.params.id}`);
     }))
 
+    //delete review route for deleting a review
+    app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
+        let {id, reviewId} = req.params;
+        /*
+* This command finds a specific listing using its unique 'id'.
+* It then removes (using the '$pull' operator) the review that matches 'reviewId'
+* it updates the 'reviews' array by removing the specified review.
+* from the 'reviews' array associated with that listing.
+*/
+        await Listing.findByIdAndUpdate(id,{$pull : {reviews : reviewId}});
+        await Review.findByIdAndDelete(reviewId);
+
+        res.redirect(`/listings/${id}`);
+    })
+);
+
+
     // ===============================================
     // 6. Error Handling Middleware
     //    (These MUST be placed at the very end of your routes and other middleware)
