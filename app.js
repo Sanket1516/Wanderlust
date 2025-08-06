@@ -14,6 +14,7 @@
 
     //joi schema validation imports
     const listingSchema = require("./schema.js");
+    const reviewSchema = require("./schema.js");
 
     // Model imports
     const Listing = require("./models/listing.js"); // Mongoose model for your listings
@@ -77,6 +78,16 @@
         }
     }
 
+    const validateReview = (req, res, next) => {
+        let {error} = reviewSchema.validate(req.body);
+        if(error){
+            let errmsg = error.details.map((el) => el.message).join(", ");
+            throw new ExpressError(400, errmsg);
+        }else{
+            next();
+        }
+    }
+
     // ===============================================
     // 5. Routes
     //
@@ -124,7 +135,7 @@
     // This route is more general and should come after specific static routes (like /listings/new).
     app.get("/listings/:id", wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
-        let data = await Listing.findById(id); // Find listing by ID
+        let data = await Listing.findById(id).populate("reviews"); // Find listing by ID
 
         // Important: Handle case where a listing with the given ID is not found
         if (!data) {
@@ -165,7 +176,7 @@
     }));
 
     //reviews
-    app.post("/listings/:id/reviews", wrapAsync(async (req, res) => {
+    app.post("/listings/:id/reviews", validateReview ,wrapAsync(async (req, res) => {
         let listing = await Listing.findById(req.params.id)
         let newreview = new Review(req.body.review);
 
@@ -174,8 +185,7 @@
         await newreview.save();
         await listing.save();
 
-        console.log("new revirew send");
-        res.send("review saved");
+        res.redirect(`/listings/${req.params.id}`);
     }))
 
     // ===============================================
