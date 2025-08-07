@@ -1,0 +1,49 @@
+const express = require("express");
+const router = express.Router({ mergeParams: true });
+ const Listing = require("../models/listing.js"); 
+ const Review = require("../models/review.js");
+ const reviewSchema = require("../schema.js");
+ const wrapAsync = require("../utils/wrapAsync.js");
+ const ExpressError = require("../utils/ExpressError.js");
+
+
+     const validateReview = (req, res, next) => {
+        let {error} = reviewSchema.validate(req.body);
+        if(error){
+            let errmsg = error.details.map((el) => el.message).join(", ");
+            throw new ExpressError(400, errmsg);
+        }else{
+            next();
+        }
+    }
+    
+    //reviews
+    router.post("/", validateReview ,wrapAsync(async (req, res) => {
+        let listing = await Listing.findById(req.params.id)
+        let newreview = new Review(req.body.review);
+
+        listing.reviews.push(newreview);
+
+        await newreview.save();
+        await listing.save();
+
+        res.redirect(`/listings/${req.params.id}`);
+    }))
+
+    //delete review route for deleting a review
+    router.delete("/:reviewId", wrapAsync(async (req, res) => {
+        let {id, reviewId} = req.params;
+        /*
+* This command finds a specific listing using its unique 'id'.
+* It then removes (using the '$pull' operator) the review that matches 'reviewId'
+* it updates the 'reviews' array by removing the specified review.
+* from the 'reviews' array associated with that listing.
+*/
+        await Listing.findByIdAndUpdate(id,{$pull : {reviews : reviewId}});
+        await Review.findByIdAndDelete(reviewId);
+
+        res.redirect(`/listings/${id}`);
+    })
+);
+
+module.exports = router;

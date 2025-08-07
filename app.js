@@ -88,6 +88,10 @@
         }
     }
 
+    //Express Router apis middleware
+    const listings = require("./routes/listing.js");
+    const reviews = require("./routes/reviews.js");
+
     // ===============================================
     // 5. Routes
     //
@@ -102,108 +106,11 @@
         return; // Added return for consistency, though Express handles it.
     });
 
-    // GET Route: Display form to create a new listing
-    // This must come BEFORE '/listings/:id' to ensure '/listings/new' is correctly matched.
-    app.get("/listings/new", wrapAsync((req, res) => {
-        res.render("listings/newlisting.ejs");
-        return;
-    }));
 
-    // GET Route: Display all listings
-    app.get("/listings", wrapAsync(async (req, res) => {
-        const allListings = await Listing.find({}); // Fetch all listings from the database
-        res.render("listings/index.ejs", { allListings }); // Render the index page with all listings
-        return;
-    }));
-
-    // POST Route: Save a new listing
-    app.post("/listings",validateListing,wrapAsync(async (req, res) => {
-        //if we validate like this every time it it repetative task so we will make an middelware for it forst it will called then async function will be called
-        // let result = listingSchema.validate(req.body);
-        // if (result.error) {
-        //     throw new ExpressError(400, result.error.message);
-        // }
-        let newlisting = new Listing( // Create a new listing instance
-            req.body.listing
-        );
-        await newlisting.save(); // Save the new listing to the database
-        res.redirect("/listings"); // Redirect to the listings index page after saving
-        return;
-    }));
-
-    // GET Route: Display details of a specific listing
-    // This route is more general and should come after specific static routes (like /listings/new).
-    app.get("/listings/:id", wrapAsync(async (req, res) => {
-        let { id } = req.params; // Destructure ID from URL parameters
-        let data = await Listing.findById(id).populate("reviews"); // Find listing by ID
-
-        // Important: Handle case where a listing with the given ID is not found
-        if (!data) {
-            throw new ExpressError(404, "Listing Not Found!");
-        }
-        res.render("listings/show.ejs", { data }); // Render the show page with listing data
-        return;
-    }));
-
-    // GET Route: Display form to edit a specific listing
-    app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-        let { id } = req.params; // Destructure ID from URL parameters
-        let data = await Listing.findById(id); // Find listing by ID
-
-        // Important: Handle case where a listing with the given ID is not found
-        if (!data) {
-            throw new ExpressError(404, "Listing Not Found!");
-        }
-        res.render("listings/edit.ejs", { data }); // Render the edit page with listing data
-        return;
-    }));
-
-    // PUT Route: Update a specific listing
-    app.put("/listings/:id",validateListing, wrapAsync(async (req, res) => {
-        let { id } = req.params; // Destructure ID from URL parameters
-        // Find and update the listing with data from the request body
-        await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-        res.redirect(`/listings/${id}`); // Redirect to the updated listing's show page
-        return;
-    }));
-
-    // DELETE Route: Delete a specific listing
-    app.delete("/listings/:id", wrapAsync(async (req, res) => {
-        let { id } = req.params; // Destructure ID from URL parameters
-        let deleted_listing = await Listing.findByIdAndDelete(id); // Find and delete the listing
-        res.redirect("/listings"); // Redirect to the listings index page after deletion
-        return;
-    }));
-
-    //reviews
-    app.post("/listings/:id/reviews", validateReview ,wrapAsync(async (req, res) => {
-        let listing = await Listing.findById(req.params.id)
-        let newreview = new Review(req.body.review);
-
-        listing.reviews.push(newreview);
-
-        await newreview.save();
-        await listing.save();
-
-        res.redirect(`/listings/${req.params.id}`);
-    }))
-
-    //delete review route for deleting a review
-    app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async (req, res) => {
-        let {id, reviewId} = req.params;
-        /*
-* This command finds a specific listing using its unique 'id'.
-* It then removes (using the '$pull' operator) the review that matches 'reviewId'
-* it updates the 'reviews' array by removing the specified review.
-* from the 'reviews' array associated with that listing.
-*/
-        await Listing.findByIdAndUpdate(id,{$pull : {reviews : reviewId}});
-        await Review.findByIdAndDelete(reviewId);
-
-        res.redirect(`/listings/${id}`);
-    })
-);
-
+    //if the api comes for /listings/----- then listings middleware this will called for all the the request and handle it
+    app.use("/listings", listings);
+    //if the api comes for reviews (/listings/-----) then listings middleware this will called for all the the request and handle it
+    app.use("/listings/:id/reviews", reviews);
 
     // ===============================================
     // 6. Error Handling Middleware
