@@ -19,10 +19,9 @@ const listingSchema = joi.object({
         price : joi.number().required().min(0)
 
 
+
     }).required()
 })
-
-module.exports = listingSchema;
 
 
 //Schema for review
@@ -33,4 +32,9 @@ const reviewSchema = joi.object({
     }).required()
 });
 
-module.exports = reviewSchema;
+
+// Make a single export statement at the end of the file
+module.exports = {
+  listingSchema,
+  reviewSchema,
+};

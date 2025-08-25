@@ -7,14 +7,16 @@
     const path = require("path"); // Node.js path module for working with file and directory paths
     const methodOverride = require("method-override"); // Middleware to use HTTP verbs like PUT or DELETE in places where the client doesn't support it
     const ejsmate = require("ejs-mate"); // Require ejs mate for layout, partial, and block support in EJS templates
+    const session = require("express-session"); // Middleware for managing sessions
+    const flash = require("connect-flash"); //used to require flash
 
     // Custom utility imports
     const wrapAsync = require("./utils/wrapAsync.js"); // Utility to wrap async route handlers for error handling
     const ExpressError = require("./utils/ExpressError.js"); // Custom error class
 
     //joi schema validation imports
-    const listingSchema = require("./schema.js");
-    const reviewSchema = require("./schema.js");
+
+    const { listingSchema, reviewSchema } = require("./schema.js");
 
     // Model imports
     const Listing = require("./models/listing.js"); // Mongoose model for your listings
@@ -78,19 +80,30 @@
         }
     }
 
-    const validateReview = (req, res, next) => {
-        let {error} = reviewSchema.validate(req.body);
-        if(error){
-            let errmsg = error.details.map((el) => el.message).join(", ");
-            throw new ExpressError(400, errmsg);
-        }else{
-            next();
-        }
-    }
 
     //Express Router apis middleware
     const listings = require("./routes/listing.js");
     const reviews = require("./routes/reviews.js");
+
+    const sessionOptions = {
+        secret : "Mysupersecretcode",
+        resave : false,
+        saveUninitialized : true,
+        cookie : {
+            expires : Date.now() + 7*24*60*60*1000, // 7 days
+            maxAge : 1000 * 60 * 60 * 24 * 7, // It will show the date of when it will be expired to user (7 days)
+            httpOnly : true // Prevent from cross-site scripting attacks used for security purpose
+        }
+    }
+
+    app.use(session(sessionOptions));
+    app.use(flash());
+
+    app.use((req,res,next) => {
+        res.locals.success = req.flash("success");
+        res.locals.error = req.flash("error");
+        next();
+    });
 
     // ===============================================
     // 5. Routes

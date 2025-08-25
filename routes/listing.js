@@ -4,8 +4,7 @@ const router = express.Router({ mergeParams: true });
 //also require all the dependencies required in this file just copy paste from the app.js let them there also
  const wrapAsync = require("../utils/wrapAsync.js");
  const ExpressError = require("../utils/ExpressError.js");
- const listingSchema = require("../schema.js");
- const reviewSchema = require("../schema.js");
+const { listingSchema, reviewSchema } = require("../schema.js");
  const Listing = require("../models/listing.js"); // Mongoose model for your listings
  const Review = require("../models/review.js");
  const validateListing = (req, res, next) => {
@@ -33,7 +32,7 @@ const router = express.Router({ mergeParams: true });
     }));
 
     // GET Route: Display all listings
-    router.get("/", wrapAsync(async (req, res) => {
+    router.get("/", wrapAsync(async (req, res,next) => {
         const allListings = await Listing.find({}); // Fetch all listings from the database
         res.render("listings/index.ejs", { allListings }); // Render the index page with all listings
         return;
@@ -50,6 +49,7 @@ const router = express.Router({ mergeParams: true });
             req.body.listing
         );
         await newlisting.save(); // Save the new listing to the database
+        req.flash("success", "New Listing Created!");
         res.redirect("/listings"); // Redirect to the listings index page after saving
         return;
     }));
@@ -62,7 +62,8 @@ const router = express.Router({ mergeParams: true });
 
         // Important: Handle case where a listing with the given ID is not found
         if (!data) {
-            throw new ExpressError(404, "Listing Not Found!");
+            req.flash("error", "Listing Not Found!");
+            res.redirect("/listings");
         }
         res.render("listings/show.ejs", { data }); // Render the show page with listing data
         return;
@@ -75,7 +76,8 @@ const router = express.Router({ mergeParams: true });
 
         // Important: Handle case where a listing with the given ID is not found
         if (!data) {
-            throw new ExpressError(404, "Listing Not Found!");
+            req.flash("error", "Listing Not Found!");
+            res.redirect("/listings");
         }
         res.render("listings/edit.ejs", { data }); // Render the edit page with listing data
         return;
@@ -86,6 +88,7 @@ const router = express.Router({ mergeParams: true });
         let { id } = req.params; // Destructure ID from URL parameters
         // Find and update the listing with data from the request body
         await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+        req.flash("success", "Successfully updated listing!");
         res.redirect(`/listings/${id}`); // Redirect to the updated listing's show page
         return;
     }));
@@ -94,7 +97,9 @@ const router = express.Router({ mergeParams: true });
     router.delete("/:id", wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         let deleted_listing = await Listing.findByIdAndDelete(id); // Find and delete the listing
+        req.flash("success", `Successfully deleted ${deleted_listing.title}`);
         res.redirect("/listings"); // Redirect to the listings index page after deletion
+
         return;
     }));
 

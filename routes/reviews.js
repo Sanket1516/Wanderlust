@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router({ mergeParams: true });
  const Listing = require("../models/listing.js"); 
  const Review = require("../models/review.js");
- const reviewSchema = require("../schema.js");
+const { reviewSchema } = require("../schema.js");
  const wrapAsync = require("../utils/wrapAsync.js");
  const ExpressError = require("../utils/ExpressError.js");
 
@@ -26,7 +26,7 @@ const router = express.Router({ mergeParams: true });
 
         await newreview.save();
         await listing.save();
-
+        req.flash("success", "New Review Created!");
         res.redirect(`/listings/${req.params.id}`);
     }))
 
@@ -41,7 +41,7 @@ const router = express.Router({ mergeParams: true });
 */
         await Listing.findByIdAndUpdate(id,{$pull : {reviews : reviewId}});
         await Review.findByIdAndDelete(reviewId);
-
+        req.flash("success", "Review Deleted!");
         res.redirect(`/listings/${id}`);
     })
 );
