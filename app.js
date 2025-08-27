@@ -85,8 +85,9 @@
 
 
     //Express Router apis middleware
-    const listings = require("./routes/listing.js");
-    const reviews = require("./routes/reviews.js");
+    const listingsRouter = require("./routes/listing.js");
+    const reviewsRouter = require("./routes/reviews.js");
+    const usersRouter = require("./routes/user.js")
 
     const sessionOptions = {
         secret : "Mysupersecretcode",
@@ -123,11 +124,6 @@
     // ===============================================
 
     // Root Route: Basic confirmation that the server is running
-    app.get("/", (req, res) => {
-        res.send("Root");
-        return; // Added return for consistency, though Express handles it.
-    });
-
     app.get("/demouser", async (req, res) => {
         let fakeuser = new User({
             email : "SAnket@124gmail.com",
@@ -141,9 +137,10 @@
     });         
 
     //if the api comes for /listings/----- then listings middleware this will called for all the the request and handle it
-    app.use("/listings", listings);
+    app.use("/listings", listingsRouter);
     //if the api comes for reviews (/listings/-----) then listings middleware this will called for all the the request and handle it
-    app.use("/listings/:id/reviews", reviews);
+    app.use("/listings/:id/reviews", reviewsRouter);
+    app.use("/", usersRouter);
 
     // ===============================================
     // 6. Error Handling Middleware
