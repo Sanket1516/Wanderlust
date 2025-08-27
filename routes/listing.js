@@ -7,6 +7,9 @@ const router = express.Router({ mergeParams: true });
 const { listingSchema, reviewSchema } = require("../schema.js");
  const Listing = require("../models/listing.js"); // Mongoose model for your listings
  const Review = require("../models/review.js");
+const {isLoggedIn} = require("../middleware.js");
+
+
  const validateListing = (req, res, next) => {
         //we have directly extracted error object from result
         let {error} = listingSchema.validate(req.body);
@@ -26,7 +29,14 @@ const { listingSchema, reviewSchema } = require("../schema.js");
 
  // GET Route: Display form to create a new listing
     // This must come BEFORE '/listings/:id' to ensure '/listings/new' is correctly matched.
-    router.get("/new", wrapAsync((req, res) => {
+    router.get("/new", isLoggedIn, wrapAsync((req, res) => {
+        // //To check if the user which is trying to create the new listing must be authenticated or login to create a new listing
+        // //We have the passport method is authenticated to check whether the user is logged in or not in current session
+        // if(!req.isAuthenticated()){
+        //     req.flash("error", "You must be logged in to create a listing.");
+        //     return res.redirect("/login");
+        // }
+        //Transferred this logic to middleware
         res.render("listings/newlisting.ejs");
         return;
     }));
@@ -39,7 +49,7 @@ const { listingSchema, reviewSchema } = require("../schema.js");
     }));
 
     // POST Route: Save a new listing
-    router.post("/",validateListing,wrapAsync(async (req, res) => {
+    router.post("/",isLoggedIn,validateListing,wrapAsync(async (req, res) => {
         //if we validate like this every time it it repetative task so we will make an middelware for it forst it will called then async function will be called
         // let result = listingSchema.validate(req.body);
         // if (result.error) {
@@ -70,7 +80,7 @@ const { listingSchema, reviewSchema } = require("../schema.js");
     }));
 
     // GET Route: Display form to edit a specific listing
-    router.get("/:id/edit", wrapAsync(async (req, res) => {
+    router.get("/:id/edit",isLoggedIn,wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         let data = await Listing.findById(id); // Find listing by ID
 
@@ -84,7 +94,7 @@ const { listingSchema, reviewSchema } = require("../schema.js");
     }));
 
     // PUT Route: Update a specific listing
-    router.put("/:id",validateListing, wrapAsync(async (req, res) => {
+    router.put("/:id", isLoggedIn, validateListing, wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         // Find and update the listing with data from the request body
         await Listing.findByIdAndUpdate(id, { ...req.body.listing });
@@ -94,7 +104,7 @@ const { listingSchema, reviewSchema } = require("../schema.js");
     }));
 
     // DELETE Route: Delete a specific listing
-    router.delete("/:id", wrapAsync(async (req, res) => {
+    router.delete("/:id",isLoggedIn, wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         let deleted_listing = await Listing.findByIdAndDelete(id); // Find and delete the listing
         req.flash("success", `Successfully deleted ${deleted_listing.title}`);
