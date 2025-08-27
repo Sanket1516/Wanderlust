@@ -9,7 +9,10 @@
     const ejsmate = require("ejs-mate"); // Require ejs mate for layout, partial, and block support in EJS templates
     const session = require("express-session"); // Middleware for managing sessions
     const flash = require("connect-flash"); //used to require flash
-
+    //For the authentication
+    const passport = require("passport");
+    const LocalStrategy = require("passport-local");
+    const User = require("./models/user.js");
     // Custom utility imports
     const wrapAsync = require("./utils/wrapAsync.js"); // Utility to wrap async route handlers for error handling
     const ExpressError = require("./utils/ExpressError.js"); // Custom error class
@@ -98,7 +101,13 @@
 
     app.use(session(sessionOptions));
     app.use(flash());
-
+    //we always add this two lines every time
+    app.use(passport.initialize());//to initalize the passport
+    app.use(passport.session());//to check whether the request coming from two diff pages are by same user or different users
+    passport.use(new LocalStrategy(User.authenticate())); //it tells to use the local strategy for authentication the local strategy is used for the authentication
+    passport.serializeUser(User.serializeUser());
+    passport.deserializeUser(User.deserializeUser());
+    //it will store the user info in the session and also remove it from the session
     app.use((req,res,next) => {
         res.locals.success = req.flash("success");
         res.locals.error = req.flash("error");
@@ -119,6 +128,17 @@
         return; // Added return for consistency, though Express handles it.
     });
 
+    app.get("/demouser", async (req, res) => {
+        let fakeuser = new User({
+            email : "SAnket@124gmail.com",
+            username : "sanket"
+            //till we have not defied the username till we can use it
+        });
+
+        let registerUser = await User.register(fakeuser, "sanket123")//we pass the user and password it also check the username is unique or not
+        res.send(registerUser);
+        return;
+    });         
 
     //if the api comes for /listings/----- then listings middleware this will called for all the the request and handle it
     app.use("/listings", listings);
