@@ -42,4 +42,16 @@ router.post("/login",
     res.redirect("/listings");
 });
 
+//To logout the user
+router.get("/logout",(req, res, next)=>{
+    //if we are any error while logging out then it will be tackled here if passport middleware gets failed
+    req.logout((err)=>{
+        if(err){
+            return next(err);
+        }
+        req.flash("success", "You are logged out");
+        res.redirect("/listings");
+    });
+})
+
 module.exports = router;
