@@ -1,4 +1,6 @@
 const Listing = require("./models/listing");
+const ExpressError = require("./utils/ExpressError");
+const {listingSchema,reviewSchema} = require("./schema");
 
 let isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -31,3 +33,27 @@ module.exports.isOwner = async (req, res, next) => {
         }
     next();
 };
+
+ module.exports.validateListing = (req, res, next) => {
+        //we have directly extracted error object from result
+        //we are validating it by joi
+        let {error} = listingSchema.validate(req.body);
+        if(error){
+            //The details object is carraying the list of additional details about the error
+            //the below fuction means every element from the details object remove it message and join them with comma
+            let errmsg = error.details.map((el) => el.message).join(",");
+            throw new ExpressError(400, errmsg);
+        }else{
+            next();
+        }
+    }
+
+module.exports.validateReview = (req, res, next) => {
+        let {error} = reviewSchema.validate(req.body);
+        if(error){
+            let errmsg = error.details.map((el) => el.message).join(", ");
+            throw new ExpressError(400, errmsg);
+        }else{
+            next();
+        }
+    }

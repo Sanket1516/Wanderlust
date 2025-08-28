@@ -7,21 +7,8 @@ const router = express.Router({ mergeParams: true });
 const { listingSchema, reviewSchema } = require("../schema.js");
  const Listing = require("../models/listing.js"); // Mongoose model for your listings
  const Review = require("../models/review.js");
-const {isLoggedIn,isOwner} = require("../middleware.js");
+const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const listing = require('../models/listing.js');
-
- const validateListing = (req, res, next) => {
-        //we have directly extracted error object from result
-        let {error} = listingSchema.validate(req.body);
-        if(error){
-            //The details object is carraying the list of additional details about the error
-            //the below fuction means every element from the details object remove it message and join them with comma
-            let errmsg = error.details.map((el) => el.message).join(",");
-            throw new ExpressError(400, errmsg);
-        }else{
-            next();
-        }
-    }
 
 
  //Replaced all the app with the router
