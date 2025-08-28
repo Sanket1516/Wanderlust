@@ -3,6 +3,7 @@ const router = express.Router();
 const User =  require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const passport = require("passport");
+const {saveRedirectUrl} = require("../middleware.js");
 
 router.get("/signup",(req,res)=>{
     res.render("users/signup.ejs");
@@ -39,12 +40,23 @@ router.get("/login",(req,res)=>{
 //2nd If the authentication fails then where to redirect on which page
 //flash = true if autyh fails then the flash message will be created and displayed
 router.post("/login",
+    //we will first save the redirected url then we will go for the login
+    saveRedirectUrl,
     passport.authenticate("local",{
         failureRedirect : "/login" , 
         failureFlash : true
     }),async(req,res)=>{
     req.flash("success","Welcome Back To wanderlust ");
-    res.redirect("/listings");
+    //we have redirected to the particular path
+    // res.redirect(req.sesion.redirectUrl);
+    //we have problem with the passport that it resets the session after every login so the session related info will be deleted
+    //so now the the req.seesion.redirect url is  empty and unacccible
+    //so we will store it in locals
+    //  res.redirect(res.locals.redirectUrl);
+     //now it is also having one flaw if we dircrtly login then we are getting the reirect url undefined
+     //so
+    let redirectUrl = res.locals.redirectUrl || "/listings";
+    res.redirect(redirectUrl);
 });
 
 //To logout the user
