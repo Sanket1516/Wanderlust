@@ -7,8 +7,8 @@ const router = express.Router({ mergeParams: true });
 const { listingSchema, reviewSchema } = require("../schema.js");
  const Listing = require("../models/listing.js"); // Mongoose model for your listings
  const Review = require("../models/review.js");
-const {isLoggedIn} = require("../middleware.js");
-
+const {isLoggedIn,isOwner} = require("../middleware.js");
+const listing = require('../models/listing.js');
 
  const validateListing = (req, res, next) => {
         //we have directly extracted error object from result
@@ -76,13 +76,12 @@ const {isLoggedIn} = require("../middleware.js");
             req.flash("error", "Listing Not Found!");
             res.redirect("/listings");
         }
-        console.log(data);
         res.render("listings/show.ejs", { data }); // Render the show page with listing data
         return;
     }));
 
     // GET Route: Display form to edit a specific listing
-    router.get("/:id/edit",isLoggedIn,wrapAsync(async (req, res) => {
+    router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         let data = await Listing.findById(id); // Find listing by ID
 
@@ -96,17 +95,27 @@ const {isLoggedIn} = require("../middleware.js");
     }));
 
     // PUT Route: Update a specific listing
-    router.put("/:id", isLoggedIn, validateListing, wrapAsync(async (req, res) => {
+    router.put("/:id", isLoggedIn,isOwner, validateListing, wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         // Find and update the listing with data from the request body
-        await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-        req.flash("success", "Successfully updated listing!");
-        res.redirect(`/listings/${id}`); // Redirect to the updated listing's show page
-        return;
+
+        //this is logic for the server side validation
+        // let listing = await Listing.findById(id);
+        // if(!listing.owner.equals(res.locals.currUser._id)){
+        //     req.flash("error", "You do not have permission to edit this listing!");
+        //     return res.redirect(`/listings/${id}`);
+        // }
+        
+       await Listing.findByIdAndUpdate(id, {
+           ...req.body.listing
+       });
+       req.flash("success", "Successfully updated listing!");
+       res.redirect(`/listings/${id}`); // Redirect to the updated listing's show page
+       return;
     }));
 
     // DELETE Route: Delete a specific listing
-    router.delete("/:id",isLoggedIn, wrapAsync(async (req, res) => {
+    router.delete("/:id",isLoggedIn,isOwner, wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
         let deleted_listing = await Listing.findByIdAndDelete(id); // Find and delete the listing
         req.flash("success", `Successfully deleted ${deleted_listing.title}`);

@@ -1,3 +1,5 @@
+const Listing = require("./models/listing");
+
 let isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
         //we store the url where the user have clicked and asked for login
@@ -18,4 +20,14 @@ if(req.session.redirectUrl){
     //So we store them in the locals and passport dont have authority to access them
 }
 next();
+};
+
+module.exports.isOwner = async (req, res, next) => {
+    const { id } = req.params;
+    let listing = await Listing.findById(id);
+     if(!listing.owner.equals(res.locals.currUser._id)){
+            req.flash("error", "You do not have permission to edit this listing you are not the owner");
+            return res.redirect(`/listings/${id}`);
+        }
+    next();
 };
