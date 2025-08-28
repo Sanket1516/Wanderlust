@@ -11,9 +11,18 @@
         <img src="<%=data.image%>" class="card-img-top show-img" alt="listing_image">
         <div class="card-body">
             <p class="card-text">
+               Owned by <i><%= data.owner.username %></i>
+            </p>
+            <p class="card-text">
                 <%=data.description%><br>
+            </p>
+            <p class="card-text">
                 &#8377; <%=data.price.toLocaleString("en-IN")%><br>
+            </p>
+             <p class="card-text">
                 <%=data.location%><br>
+            </p>
+             <p class="card-text">
                 <%=data.country%>
             </p>
         </div>

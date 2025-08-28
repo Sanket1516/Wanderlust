@@ -58,6 +58,7 @@ const {isLoggedIn} = require("../middleware.js");
         let newlisting = new Listing( // Create a new listing instance
             req.body.listing
         );
+        newlisting.owner = req.user._id; // Set the owner of the listing to the authenticated user
         await newlisting.save(); // Save the new listing to the database
         req.flash("success", "New Listing Created!");
         res.redirect("/listings"); // Redirect to the listings index page after saving
@@ -68,13 +69,14 @@ const {isLoggedIn} = require("../middleware.js");
     // This route is more general and should come after specific static routes (like /listings/new).
     router.get("/:id", wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
-        let data = await Listing.findById(id).populate("reviews"); // Find listing by ID
+        let data = await Listing.findById(id).populate("reviews").populate("owner"); // Find listing by ID
 
         // Important: Handle case where a listing with the given ID is not found
         if (!data) {
             req.flash("error", "Listing Not Found!");
             res.redirect("/listings");
         }
+        console.log(data);
         res.render("listings/show.ejs", { data }); // Render the show page with listing data
         return;
     }));
