@@ -8,7 +8,7 @@ const { listingSchema, reviewSchema } = require("../schema.js");
  const Listing = require("../models/listing.js"); // Mongoose model for your listings
  const Review = require("../models/review.js");
 const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
-const listing = require('../models/listing.js');
+const listingContoller = require("../controller/listings.js");
 
 
  //Replaced all the app with the router
@@ -29,11 +29,7 @@ const listing = require('../models/listing.js');
     }));
 
     // GET Route: Display all listings
-    router.get("/", wrapAsync(async (req, res,next) => {
-        const allListings = await Listing.find({}); // Fetch all listings from the database
-        res.render("listings/index.ejs", { allListings }); // Render the index page with all listings
-        return;
-    }));
+    router.get("/", wrapAsync(listingContoller.index));
 
     // POST Route: Save a new listing
     router.post("/",isLoggedIn,validateListing,wrapAsync(async (req, res) => {
