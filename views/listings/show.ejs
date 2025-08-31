@@ -64,7 +64,8 @@
          <% for(review of data.reviews) { %>
             <div class="card col-5 ms-3 mb-3">
                 <div class="card-body">
-                     <h5 class="card-title">Sanket Mali</h5>
+                    <!-- we have print here -->
+                     <h5 class="card-title">@<%= review.author.username %></h5>
                       <p class="card-text"><%= review.comment %></p>
                       <div class="card-text"><%= review.rating %> stars</div>
                 </div>

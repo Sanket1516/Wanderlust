@@ -1,6 +1,7 @@
 const Listing = require("./models/listing");
 const ExpressError = require("./utils/ExpressError");
 const {listingSchema,reviewSchema} = require("./schema");
+const Review = require("./models/review");
 
 let isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -57,3 +58,13 @@ module.exports.validateReview = (req, res, next) => {
             next();
         }
     }
+
+    module.exports.isReviewAuthor = async (req, res, next) => {
+    const {id,reviewId } = req.params;
+    let review = await Review.findById(reviewId);
+     if(!review.author.equals(res.locals.currUser._id)){
+            req.flash("error", "You are not the author you dont have permission to delete this listing");
+            return res.redirect(`/listings/${id}`);
+        }
+    next();
+};

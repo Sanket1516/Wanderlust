@@ -3,7 +3,7 @@ const router = express.Router({ mergeParams: true });
  const Listing = require("../models/listing.js"); 
  const Review = require("../models/review.js");
  const wrapAsync = require("../utils/wrapAsync.js");
- const {validateReview, isLoggedIn} = require("../middleware.js");
+ const {validateReview, isLoggedIn,isReviewAuthor} = require("../middleware.js");
 
     
     //reviews
@@ -20,7 +20,7 @@ const router = express.Router({ mergeParams: true });
     }))
 
     //delete review route for deleting a review
-    router.delete("/:reviewId",isLoggedIn,wrapAsync(async (req, res) => {
+    router.delete("/:reviewId",isLoggedIn,isReviewAuthor,wrapAsync(async (req, res) => {
         let {id, reviewId} = req.params;
         /*
 * This command finds a specific listing using its unique 'id'.

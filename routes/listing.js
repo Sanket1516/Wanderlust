@@ -56,7 +56,15 @@ const listing = require('../models/listing.js');
     // This route is more general and should come after specific static routes (like /listings/new).
     router.get("/:id", wrapAsync(async (req, res) => {
         let { id } = req.params; // Destructure ID from URL parameters
-        let data = await Listing.findById(id).populate("reviews").populate("owner"); // Find listing by ID
+        let data = await Listing.findById(id)
+        //it says populate the author field of each review and for each reviews also populate the author which is assosciated to that review
+        .populate({
+            path : "reviews",
+            populate : {
+                path : "author",
+        },
+     })
+     .populate("owner");
 
         // Important: Handle case where a listing with the given ID is not found
         if (!data) {
