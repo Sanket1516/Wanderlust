@@ -14,29 +14,38 @@ const listingContoller = require("../controller/listings.js");
  //Replaced all the app with the router
  //also replaced if only /listings as a / and removed the /listngs from all the routes only in the http request not in callbacks
 
- // GET Route: Display form to create a new listing
-    // This must come BEFORE '/listings/:id' to ensure '/listings/new' is correctly matched.
-    router.get("/new", isLoggedIn, wrapAsync(listingContoller.renderNewForm));
-
-    // GET Route: Display all listings
-    router.get("/", wrapAsync(listingContoller.index));
-
-    // POST Route: Save a new listing
-    router.post("/",isLoggedIn,validateListing,wrapAsync(listingContoller.createNewListing));
-
-    // GET Route: Display details of a specific listing
-    // This route is more general and should come after specific static routes (like /listings/new).
-    router.get("/:id", wrapAsync(listingContoller.showListing));
-
-    // GET Route: Display form to edit a specific listing
-    router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(listingContoller.renderEditForm));
-
-    // PUT Route: Update a specific listing
-    router.put("/:id", isLoggedIn,isOwner, validateListing, wrapAsync(listingContoller.updateListing));
-
-    // DELETE Route: Delete a specific listing
-    router.delete("/:id",isLoggedIn,isOwner, wrapAsync(listingContoller.destroyListing));
+// GET Route: Display form to create a new listing
+// This must come BEFORE '/listings/:id' to ensure '/listings/new' is correctly matched.
+router.get("/new", isLoggedIn, wrapAsync(listingContoller.renderNewForm));
 
 
+
+// GET Route: Display all listings
+// POST Route: Save a new listing
+router.route("/")
+.get(wrapAsync(listingContoller.index))
+.post(isLoggedIn,validateListing,wrapAsync(listingContoller.createNewListing));
+
+// GET Route: Display details of a specific listing
+// This route is more general and should come after specific static routes (like /listings/new).
+// PUT Route: Update a specific listing
+// DELETE Route: Delete a specific listing
+router.route("/:id")
+.get(wrapAsync(listingContoller.showListing))
+.put(isLoggedIn,isOwner, validateListing, wrapAsync(listingContoller.updateListing))
+.delete(isLoggedIn,isOwner, wrapAsync(listingContoller.destroyListing));
+
+
+
+
+
+
+ 
+
+
+// GET Route: Display form to edit a specific listing
+router.get("/:id/edit",isLoggedIn,isOwner, wrapAsync(listingContoller.renderEditForm));
+
+    
 
 module.exports = router;

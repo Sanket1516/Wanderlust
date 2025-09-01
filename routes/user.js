@@ -7,18 +7,20 @@ const {saveRedirectUrl} = require("../middleware.js");
 const userController = require("../controller/users.js");
 const user = require("../models/user.js");
 
-router.get("/signup",userController.renderSignupForm);
 
-router.post("/signup", wrapAsync(userController.signup));
+router.route("/signup")
+.get(userController.renderSignupForm)
+.post(wrapAsync(userController.signup))
 
-router.get("/login",userController.renderLoginForm);
 
 //we use passort authenticate middleware before login to check eeather it exists or not
 //It takes two parameters 
 //1st strategy
 //2nd If the authentication fails then where to redirect on which page
 //flash = true if autyh fails then the flash message will be created and displayed
-router.post("/login",
+router.route("/login")
+.get(userController.renderLoginForm)
+.post(
     //we will first save the redirected url then we will go for the login
     saveRedirectUrl,
     passport.authenticate("local",
