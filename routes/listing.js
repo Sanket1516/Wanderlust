@@ -9,6 +9,8 @@ const { listingSchema, reviewSchema } = require("../schema.js");
  const Review = require("../models/review.js");
 const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const listingContoller = require("../controller/listings.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 
  //Replaced all the app with the router
@@ -24,8 +26,10 @@ router.get("/new", isLoggedIn, wrapAsync(listingContoller.renderNewForm));
 // POST Route: Save a new listing
 router.route("/")
 .get(wrapAsync(listingContoller.index))
-.post(isLoggedIn,validateListing,wrapAsync(listingContoller.createNewListing));
-
+// .post(isLoggedIn,validateListing,wrapAsync(listingContoller.createNewListing));
+.post(upload.single('listing[image]'),(req,res)=>{
+    res.send(req.file);
+});
 // GET Route: Display details of a specific listing
 // This route is more general and should come after specific static routes (like /listings/new).
 // PUT Route: Update a specific listing
