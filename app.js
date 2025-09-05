@@ -1,3 +1,9 @@
+// ===============================================
+// Including env variables
+if(process.env.NODE_ENV !== "production"){
+    require("dotenv").config();
+}
+    
     // ===============================================
     // 1. Module Imports
     // ===============================================
@@ -16,7 +22,6 @@
     // Custom utility imports
     const wrapAsync = require("./utils/wrapAsync.js"); // Utility to wrap async route handlers for error handling
     const ExpressError = require("./utils/ExpressError.js"); // Custom error class
-
     //joi schema validation imports
 
     const { listingSchema, reviewSchema } = require("./schema.js");
