@@ -10,7 +10,8 @@ const { listingSchema, reviewSchema } = require("../schema.js");
 const {isLoggedIn,isOwner,validateListing} = require("../middleware.js");
 const listingContoller = require("../controller/listings.js");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const { storage } = require("../cloudconfig.js");
+const upload = multer({ storage });  //now uploads will store the new file in the cloudinary storage
 
 
  //Replaced all the app with the router
