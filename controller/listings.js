@@ -41,6 +41,9 @@ module.exports.showListing = async (req, res) => {
     };
 
 module.exports.createNewListing = async (req, res) => {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        console.log(url,filename);
         //if we validate like this every time it it repetative task so we will make an middelware for it forst it will called then async function will be called
         // let result = listingSchema.validate(req.body);
         // if (result.error) {
@@ -50,6 +53,7 @@ module.exports.createNewListing = async (req, res) => {
             req.body.listing
         );
         newlisting.owner = req.user._id; // Set the owner of the listing to the authenticated user
+        newlisting.image = {url,filename}; // Set the image URL and filename from the uploaded file
         await newlisting.save(); // Save the new listing to the database
         req.flash("success", "New Listing Created!");
         res.redirect("/listings"); // Redirect to the listings index page after saving

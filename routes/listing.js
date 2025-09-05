@@ -27,10 +27,7 @@ router.get("/new", isLoggedIn, wrapAsync(listingContoller.renderNewForm));
 // POST Route: Save a new listing
 router.route("/")
 .get(wrapAsync(listingContoller.index))
-// .post(isLoggedIn,validateListing,wrapAsync(listingContoller.createNewListing));
-.post(upload.single('listing[image]'),(req,res)=>{
-    res.send(req.file);
-});
+.post(isLoggedIn,upload.single('listing[image]'),wrapAsync(listingContoller.createNewListing));
 // GET Route: Display details of a specific listing
 // This route is more general and should come after specific static routes (like /listings/new).
 // PUT Route: Update a specific listing
