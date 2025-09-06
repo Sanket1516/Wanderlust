@@ -43,7 +43,6 @@ module.exports.showListing = async (req, res) => {
 module.exports.createNewListing = async (req, res) => {
         let url = req.file.path;
         let filename = req.file.filename;
-        console.log(url,filename);
         //if we validate like this every time it it repetative task so we will make an middelware for it forst it will called then async function will be called
         // let result = listingSchema.validate(req.body);
         // if (result.error) {
