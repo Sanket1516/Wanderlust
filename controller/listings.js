@@ -83,9 +83,19 @@ module.exports.updateListing = async (req, res) => {
         //     return res.redirect(`/listings/${id}`);
         // }
         
-       await Listing.findByIdAndUpdate(id, {
+       let listing = await Listing.findByIdAndUpdate(id, {
            ...req.body.listing
        });
+
+       //First it will save all the data else than the image then it will check if the image is there or not
+       //if it is there then only it will update the image
+       if(typeof req.file !== 'undefined'){
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = {url,filename}; // Update the image URL and filename from the uploaded file
+        await listing.save(); // Save the updated listing to the database
+       }
+
        req.flash("success", "Successfully updated listing!");
        res.redirect(`/listings/${id}`); // Redirect to the updated listing's show page
        return;

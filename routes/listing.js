@@ -34,7 +34,7 @@ router.route("/")
 // DELETE Route: Delete a specific listing
 router.route("/:id")
 .get(wrapAsync(listingContoller.showListing))
-.put(isLoggedIn,isOwner, validateListing, wrapAsync(listingContoller.updateListing))
+.put(isLoggedIn,isOwner,upload.single('listing[image]'),validateListing, wrapAsync(listingContoller.updateListing))
 .delete(isLoggedIn,isOwner, wrapAsync(listingContoller.destroyListing));
 
 
