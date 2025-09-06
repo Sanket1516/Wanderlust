@@ -1,3 +1,4 @@
+const listing = require("../models/listing");
 const Listing = require("../models/listing");
 
 
@@ -68,7 +69,10 @@ module.exports.renderEditForm = async (req, res) => {
             req.flash("error", "Listing Not Found!");
             res.redirect("/listings");
         }
-        res.render("listings/edit.ejs", { data }); // Render the edit page with listing data
+         
+        let OriginalImageURL = data.image.url;
+        OriginalImageURL = OriginalImageURL.replace("/upload","/upload/w_250"); // Resize the image for display purposes 
+        res.render("listings/edit.ejs", { data , OriginalImageURL }); // Render the edit page with listing data
         return;
     };
 
