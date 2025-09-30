@@ -1,5 +1,13 @@
-const listing = require("../models/listing");
 const Listing = require("../models/listing");
+// const mbxTilesets = require('@mapbox/mapbox-sdk/services/tilesets');
+//just replacem the type of service we use in the place of tilesets we will use geocoding of mapbox
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapToken = process.env.MAPBOX_TOKEN;
+const geocodingClient = mbxGeocoding({ accessToken: mapToken });//we have now created a box which will allow us to do the geocoding stuff and also oythers in mapbox if we want
+
+
+
+
 
 
 module.exports.index = async (req, res,next) => {
@@ -42,6 +50,16 @@ module.exports.showListing = async (req, res) => {
     };
 
 module.exports.createNewListing = async (req, res) => {
+        let response = await geocodingClient.forwardGeocode({
+        // query: 'New Delhi, India', //this is just for testing purpose we will replace it with the location which the user has entered in the form
+        query: req.body.listing.location, //we will get the location from the form which the user has entered
+        limit: 1 ,// it says how much posibble coordinates can we get
+        })
+        .send();
+
+        console.log(response.body.features[0].geometry); //in response there is body in that there is features array in that the first element of that array there is geometry object which has the coordinates
+        res.send("geo coding done");
+        
         let url = req.file.path;
         let filename = req.file.filename;
         //if we validate like this every time it it repetative task so we will make an middelware for it forst it will called then async function will be called
