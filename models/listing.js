@@ -35,9 +35,20 @@ const listing_Schema = new schema(
         owner :{
             type : schema.Types.ObjectId,
             ref : "User"
+        },
+        geometry : {
+            type : {
+                type : String,
+                enum : ["Point"],
+                required : true
+            },
+            coordinates : {
+                type : [Number],
+                required : true
+            }
         }
     }
-)
+);  
 
 //we will also add our mongoose middlewares here only like post or pre
 //delete listing delete all reviews delete middleware

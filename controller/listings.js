@@ -57,8 +57,8 @@ module.exports.createNewListing = async (req, res) => {
         })
         .send();
 
-        console.log(response.body.features[0].geometry); //in response there is body in that there is features array in that the first element of that array there is geometry object which has the coordinates
-        res.send("geo coding done");
+        // console.log(response.body.features[0].geometry); //in response there is body in that there is features array in that the first element of that array there is geometry object which has the coordinates
+        // res.send("geo coding done");
         
         let url = req.file.path;
         let filename = req.file.filename;
@@ -72,7 +72,9 @@ module.exports.createNewListing = async (req, res) => {
         );
         newlisting.owner = req.user._id; // Set the owner of the listing to the authenticated user
         newlisting.image = {url,filename}; // Set the image URL and filename from the uploaded file
-        await newlisting.save(); // Save the new listing to the database
+        newlisting.geometry = response.body.features[0].geometry; // Set the geometry from the geocoding response   
+        let savedListing = await newlisting.save(); // Save the new listing to the database
+        
         req.flash("success", "New Listing Created!");
         res.redirect("/listings"); // Redirect to the listings index page after saving
         return;
