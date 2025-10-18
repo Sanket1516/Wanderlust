@@ -46,6 +46,10 @@ const listing_Schema = new schema(
                 type : [Number],
                 required : true
             }
+        },
+        category : {
+            type : String,
+            enum : ["Beach","Mountain","City","Countryside","Desert","Forest","Island","Village","Historical","Adventure","Cultural"]
         }
     }
 );  
