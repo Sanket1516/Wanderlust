@@ -157,9 +157,9 @@ if(process.env.NODE_ENV !== "production"){
     // This is for if the request comes and does not match any of the above routes,
     // then it will come here. It's like logic: if it doesn't match at all,
     // then we will send a "Page Not Found" error.
-    app.use((req, res, next) => {
-        next(new ExpressError(404, "Page Not Found"));
-    });
+    // app.use((req, res, next) => {
+    //     next(new ExpressError(404, "Page Not Found"));
+    // });
     // We can also use app.use above, but to use app.all is better practice and is strictly recommended
     // (Note: `app.use` works here as a catch-all when placed last,
     // `app.all('*', ...)` is also a common and explicit way for a catch-all for all HTTP methods)
