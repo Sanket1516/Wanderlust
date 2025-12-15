@@ -32,10 +32,32 @@ router.route("/")
 // This route is more general and should come after specific static routes (like /listings/new).
 // PUT Route: Update a specific listing
 // DELETE Route: Delete a specific listing
+
+router.get("/search", async (req, res) => {
+    const { q } = req.query;
+
+    if (!q) {
+        return res.redirect("/listings");
+    }
+
+    const listings = await Listing.find({
+        $or: [
+            { title: { $regex: q, $options: "i" } },
+            { location: { $regex: q, $options: "i" } },
+            { country: { $regex: q, $options: "i" } },
+            { category: { $regex: q, $options: "i" } }
+        ]
+    });
+
+    res.render("listings/index", { allListings: listings });
+});
+
+
 router.route("/:id")
 .get(wrapAsync(listingContoller.showListing))
 .put(isLoggedIn,isOwner,upload.single('listing[image]'),validateListing, wrapAsync(listingContoller.updateListing))
 .delete(isLoggedIn,isOwner, wrapAsync(listingContoller.destroyListing));
+
 
 
 

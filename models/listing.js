@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Review = require("./review");
+const { required } = require("joi");
 const schema = mongoose.Schema;
 const listing_Schema = new schema(
     {
@@ -49,7 +50,8 @@ const listing_Schema = new schema(
         },
         category : {
             type : String,
-            enum : ["Beach","Mountain","City","Countryside","Desert","Forest","Island","Village","Historical","Adventure","Cultural"]
+            enum : ["Rooms","Mountains","City","Castles","Pools","Camp","Cabin","Nature","Farm","Boat","Cruise"],
+            required : true
         }
     }
 );  
