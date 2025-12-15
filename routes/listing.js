@@ -40,14 +40,18 @@ router.get("/search", async (req, res) => {
         return res.redirect("/listings");
     }
 
-    const listings = await Listing.find({
-        $or: [
-            { title: { $regex: q, $options: "i" } },
-            { location: { $regex: q, $options: "i" } },
-            { country: { $regex: q, $options: "i" } },
-            { category: { $regex: q, $options: "i" } }
-        ]
-    });
+// $or → match if ANY field matches
+// $regex → partial text search
+// "i" → case-insensitive
+const listings = await Listing.find({
+    $or: [
+        { title: { $regex: q, $options: "i" } },
+        { location: { $regex: q, $options: "i" } },
+        { country: { $regex: q, $options: "i" } },
+        { category: { $regex: q, $options: "i" } }
+    ]
+});
+
 
     res.render("listings/index", { allListings: listings });
 });
