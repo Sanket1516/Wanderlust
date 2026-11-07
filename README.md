@@ -67,6 +67,8 @@ CLOUD_API_SECRET=your_cloudinary_secret
 MAPBOX_TOKEN=your_mapbox_public_token
 ```
 
+> **Linux/macOS note:** `routes/listing.js` requires `../cloudconfig.js` while the file is named `cloudConfig.js`. Windows ignores the case difference; on case-sensitive systems rename the import (or the file) so they match.
+
 Seed sample listings (optional) and start the server:
 
 ```bash
